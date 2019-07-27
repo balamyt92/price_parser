@@ -1,0 +1,19 @@
+{
+  "name": "balamyt92/denis",
+  "authors": [
+    {
+      "name": "Anatoly Medvedev",
+      "email": "balamyt92@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "APP\\": "src/"
+    }
+  },
+  "require": {
+    "monolog/monolog": "^1.24",
+    "ext-xmlreader": "*",
+    "ext-simplexml": "*"
+  }
+}
