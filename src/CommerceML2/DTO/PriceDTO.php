@@ -25,6 +25,10 @@ class PriceDTO implements DtoInterface
      * @var bool
      */
     public $isCategory;
+    /**
+     * @var string
+     */
+    public $id;
 
     public function prepare(SimpleXMLElement $loadElementXml)
     {
@@ -37,16 +41,21 @@ class PriceDTO implements DtoInterface
             $countNoEmptyCell = 0;
             /** @var SimpleXMLElement $cel */
             foreach ($this->cols as &$cel) {
+                $atributs = $cel->attributes('ss', true);
                 $cel = (array)$cel;
                 if (!empty($cel['Data'])) {
                     ++$countNoEmptyCell;
                     $cel = $cel['Data'];
+                    foreach ($atributs as $k => $v) {
+                        if ($k === 'StyleID') {
+                            $this->id = (string)$v;
+                        }
+                    }
                 }
             }
             unset($cel);
 
             if ($countNoEmptyCell === 1) {
-//                var_dump('Это категория');
                 $this->isCategory = true;
             } else if ($countNoEmptyCell > 1) {
 //                var_dump('Это товар');

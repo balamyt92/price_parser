@@ -15,17 +15,24 @@ class PriceLoader extends BaseLoader
     private $previous;
     private static $rows = [];
     private $currentCategoryString = '';
+    private $categoryDeep = [];
+    private $categoryNames = [];
 
     public function loadData(DtoInterface $item)
     {
         /** @var PriceDTO $item */
         if ($item->noEmpty) {
             if ($item->isCategory) {
-                if ($this->previous && $this->previous->isCategory) {
-                    $this->currentCategoryString .= ' / ' . $this->getCategoryName($item);
-                } else {
-                    $this->currentCategoryString = $this->getCategoryName($item);
+                if (in_array($item->id, $this->categoryDeep, true)) {
+                    $key = array_search($item->id, $this->categoryDeep, true);
+                    $this->categoryDeep = array_slice($this->categoryDeep, 0, $key);
+                    $this->categoryNames = array_slice($this->categoryNames, 0, $key);
                 }
+
+                $this->categoryDeep[] = $item->id;
+                $this->categoryNames[] = $this->getCategoryName($item);
+
+                $this->currentCategoryString = implode(' / ', $this->categoryNames);
             } else {
                 self::$rows[] = array_merge([$this->currentCategoryString], $item->cols);
             }
@@ -46,11 +53,11 @@ class PriceLoader extends BaseLoader
 
     private function getCategoryName(PriceDTO $item)
     {
-        return array_reduce($item->cols, function ($acc, $item) {
+        return trim(array_reduce($item->cols, function ($acc, $item) {
             $acc .= empty($item) || is_array($item) ? '' : $item;
 
             return $acc;
-        }, '');
+        }, ''));
     }
 
     public function makeRowsXml($rows)
