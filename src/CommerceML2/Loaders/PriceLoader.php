@@ -42,13 +42,11 @@ class PriceLoader extends BaseLoader
 
     public function beforeLoad()
     {
-        var_dump('start');
     }
 
     public function afterLoad()
     {
         file_put_contents('result.xml', $this->wrapXml($this->makeRowsXml(self::$rows)));
-        var_dump('finish');
     }
 
     private function getCategoryName(PriceDTO $item)
